@@ -103,5 +103,54 @@ ggplot(Brew_beers, aes(x=IBU, y= ABV)) +
   labs(x="IBU",y="ABV")
 
 
+#8
+drinkKNN <- dplyr::filter(Brew_beers, Style == "IPA" | Style == "Ale")
+
+iterations = 100
+numks = 25
+splitPerc = .70
+set.seed(33)
+
+masterAcc = matrix(nrow = iterations, ncol = numks)
+
+for(j in 1:iterations)
+{
+  accs = data.frame(accuracy = numeric(30), k = numeric(30))
+  trainIndices = sample(1:dim(drinkKNN)[1],round(splitPerc * dim(drinkKNN)[1]))
+  train = drinkKNN[trainIndices,]
+  test = drinkKNN[-trainIndices,]
+  for(i in 1:numks)
+  {
+    classifications = class::knn(train[,c(1,3)],test[,c(1,3)],train$Style, prob = TRUE, k = i)
+    table(classifications,test$Style)
+    CM = confusionMatrix(table(classifications,test$Style))
+    masterAcc[j,i] = CM$overall[1]
+  }
+}
+
+MeanAcc = colMeans(masterAcc)
+# Visually find the best value of k by using it's location in the dataframe based on the highest Mean value
+plot(seq(1,numks,1),MeanAcc, type = "l", 
+     col = "#c8201e",
+     main = "Value for K Neighbors vs Accuracy", 
+     sub = "Budweiser Consultation",
+     xlab = "Value of K Neighbors",
+     ylab = "Accuracy Rate (Percentage)")
 
 
+#9
+
+drinkKNN %>% 
+  ggplot(aes(x = IBU, y = ABV, color = Style)) +
+  geom_point(show.legend = TRUE, na.rm = TRUE) +
+  geom_abline(intercept =  comparisonCoef[1] , slope = comparisonCoef[2], color = "red", size = 1) +
+  theme_classic() + 
+  labs(title = "IBU vs ABV", 
+       subtitle = "Budweiser Consultation",
+       y = "Alcohol By Volume", 
+       x = "Int'l Bitterness Unit",
+       caption="ABV and IBU values imputed where necessary.") +
+  scale_color_manual(values = c("red","blue","#green"),
+                     name = "Type of Beer",
+                     breaks = c("Ale", "IPA", "Neither"),
+                     labels = c("Ale", "IPA", "Neither"))
