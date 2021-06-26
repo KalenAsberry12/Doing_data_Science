@@ -1,8 +1,8 @@
 # Case Study 1
 
 
-# Purpose of Projects
-You can assume that your audience is the CEO and CFO of Budweiser (your client) and that they only have had one class in statistics and have indicated that you cannot take more than 7 minutes of their time. 20% of your grade will be based on the presentation. 
+# Introductions
+I am presenting to the board, the finding of the brewery and beers data. My team and I are wanting to make significant strides to find the relationship between ABV and IBU. To locate the difference between come states and the bittness of alcohol context. We're hoping that the board will approve us for more funding to push our products in those respective states based off our findings. 
 
 
 # Conclusion
